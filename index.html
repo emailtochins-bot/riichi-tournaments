@@ -1,27 +1,312 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Riichi Mahjong Tournament Calendar</title>
-</head>
-<body>
-    <h1>Riichi Mahjong Tournament Calendar</h1>
-    <p>Welcome! Here is a list of upcoming tournaments.</p>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Riichi Mahjong Tournament Calendar</title>
 
-    <table border="1">
-        <tr>
-            <th>Date</th>
-            <th>Event</th>
-            <th>Location</th>
-            <th>Link</th>
-        </tr>
-        <tr>
-            <td>2025-01-20</td>
-            <td>Sydney Riichi Open</td>
-            <td>Sydney, Australia</td>
-            <td><a href="#">More info</a></td>
-        </tr>
-    </table>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f5f5;
+      color: #222;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* HERO BANNER */
+    .hero {
+      position: relative;
+      height: 260px;
+      background-image: url("hero.jpg"); /* TODO: change this */
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+    }
+
+    .hero::before {
+      /* dark overlay so text is readable */
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-title {
+      font-size: 3rem;
+      font-weight: 700;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+      letter-spacing: 2px;
+    }
+
+    /* PAGE CONTENT WRAPPER */
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px 24px 40px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .page h1 {
+      font-size: 1.7rem;
+      margin-bottom: 8px;
+    }
+
+    .page p {
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+    }
+
+    .top-links {
+      margin-top: 6px;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+    }
+
+    .top-links a {
+      margin-right: 8px;
+    }
+
+    /* BUTTON STYLE */
+    .btn {
+      display: inline-block;
+      padding: 9px 18px;
+      border-radius: 4px;
+      background: #4a7c16;
+      color: #fff;
+      border: none;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin: 10px 0 18px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+    .btn:hover {
+      background: #3b6412;
+      text-decoration: none;
+    }
+
+    /* EVENT COUNT */
+    .event-count {
+      font-weight: 600;
+      margin: 10px 0 12px;
+      font-size: 0.95rem;
+    }
+
+    /* EVENT LIST */
+    .event-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .event-card {
+      display: flex;
+      background: #fafafa;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid #e0e0e0;
+      transition: box-shadow 0.15s ease, transform 0.1s ease;
+    }
+
+    .event-card:hover {
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .event-image {
+      width: 140px;
+      height: 90px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .event-content {
+      padding: 10px 14px;
+      flex: 1;
+    }
+
+    .event-title {
+      font-size: 1.02rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .event-meta {
+      font-size: 0.85rem;
+      color: #555;
+      margin-bottom: 4px;
+    }
+
+    .event-meta span {
+      display: inline-block;
+      margin-right: 8px;
+    }
+
+    .event-tags {
+      margin-top: 6px;
+      font-size: 0.8rem;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      margin-right: 6px;
+      background: #fff;
+    }
+
+    .event-arrow {
+      align-self: center;
+      padding: 0 10px;
+      color: #888;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 640px) {
+      .hero {
+        height: 200px;
+      }
+      .hero-title {
+        font-size: 2.2rem;
+      }
+      .event-card {
+        flex-direction: column;
+      }
+      .event-image {
+        width: 100%;
+        height: 160px;
+      }
+      .event-arrow {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HERO BANNER -->
+  <header class="hero">
+    <div class="hero-content">
+      <div class="hero-title">Riichi Mahjong</div>
+    </div>
+  </header>
+
+  <!-- MAIN PAGE CONTENT -->
+  <main class="page">
+    <h1>Riichi Mahjong Tournament Calendar</h1>
+    <p>
+      This calendar is a community-maintained list of upcoming Riichi Mahjong
+      tournaments, leagues and special events. You can use it to find events
+      by date, location and organiser.
+    </p>
+    <p class="top-links">
+      See also:
+      <a href="#">Australia &amp; NZ club list</a> ·
+      <a href="#">How to submit your tournament</a>
+    </p>
+
+    <a href="#" class="btn">Show on Map (coming soon)</a>
+
+    <div class="event-count">Events 1 to 3 of 3</div>
+
+    <!-- EVENT LIST -->
+    <section class="event-list">
+
+      <!-- EVENT 1 -->
+      <article class="event-card">
+        <img
+          src="event1.jpg"
+          alt="Sydney Riichi Open"
+          class="event-image"
+        />
+        <div class="event-content">
+          <a href="https://example.com/sydney-open" class="event-title">
+            Sydney Riichi Open 2025
+          </a>
+          <div class="event-meta">
+            <span>🗓 Sunday, 16 March 2025</span>
+            <span>📍 Sydney, NSW, Australia</span>
+          </div>
+          <div class="event-tags">
+            <span class="tag">4-hanchan</span>
+            <span class="tag">Open</span>
+          </div>
+        </div>
+        <div class="event-arrow">›</div>
+      </article>
+
+      <!-- EVENT 2 -->
+      <article class="event-card">
+        <img
+          src="event2.jpg"
+          alt="Adelaide Riichi Open"
+          class="event-image"
+        />
+        <div class="event-content">
+          <a href="https://example.com/adelaide-open" class="event-title">
+            Adelaide Riichi Open (ARMO)
+          </a>
+          <div class="event-meta">
+            <span>🗓 Saturday–Sunday, 7–8 June 2025</span>
+            <span>📍 Adelaide, SA, Australia</span>
+          </div>
+          <div class="event-tags">
+            <span class="tag">EMA Rules</span>
+            <span class="tag">2-day event</span>
+          </div>
+        </div>
+        <div class="event-arrow">›</div>
+      </article>
+
+      <!-- EVENT 3 -->
+      <article class="event-card">
+        <img
+          src="event3.jpg"
+          alt="Local Club Monthly"
+          class="event-image"
+        />
+        <div class="event-content">
+          <a href="https://example.com/local-league" class="event-title">
+            Adelaide Monthly League
+          </a>
+          <div class="event-meta">
+            <span>🗓 First Sunday of each month</span>
+            <span>📍 Lost Dice, Adelaide, SA</span>
+          </div>
+          <div class="event-tags">
+            <span class="tag">League</span>
+            <span class="tag">Club event</span>
+          </div>
+        </div>
+        <div class="event-arrow">›</div>
+      </article>
+
+    </section>
+  </main>
 </body>
 </html>
